@@ -6,31 +6,25 @@ class Cliente {
   #renda;
   #conta;
 
-  // não precisa de construtor assim pq o registro só acontecerá se houver uma conta instanciada
-  //   constructor(nome, cpf, renda, conta){
-  //         this.nome = nome;
-  //         this.#cpf = cpf;
-  //         this.#renda = renda;
-  //         this.#conta = conta;
-  //     }
+  static todosClientes = [];
 
-  //     `Resgistro: ${{
-  //         Nome: this.nome,
-  //         CPF: this.cpf,
-  //         Renda: this.renda,
-  //     }}`
-
-  registrar(nome, cpf, renda, conta) { // aqui é um construtor, construtor() não é uma palavra reservada, é apenas uma convenção
+  registrar(nome, cpf, renda, conta) {
     if (conta instanceof Conta) {
       this.nome = nome;
       this.#cpf = cpf;
       this.#renda = renda;
       this.#conta = conta;
 
+      Cliente.todosClientes.push({ nome: this.nome, cpf: this.#cpf, renda: this.#renda, conta: this.#conta })
+      
       return `Cliente cadastrado com sucesso!`;
     } else {
       throw new Error(`Houve um erro! Cliente não cadastrado...`);
     }
+  }
+
+  get getRenda(){
+    return this.#renda;
   }
 }
 

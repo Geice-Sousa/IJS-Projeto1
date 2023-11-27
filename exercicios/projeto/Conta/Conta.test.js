@@ -3,13 +3,12 @@ const Conta = require("./Conta");
 describe("CLASSE CONTA", () => {
   const conta = new Conta();
 
-  beforeEach(()=>{
-    conta.destruirConta()
-  })
+  // beforeEach(()=>{
+  //   conta.destruirConta() // usando para apagar as contas criadas, pois a cada vez que roda o teste cria-se todas as contas novamente
+  // });
 
   describe("CRIAÇÃO DE UMA CONTA", () => {
     test("deveria retorna uma conta", () => {
-      const conta = new Conta();
       expect(conta instanceof Conta).toBeTruthy();
     });
     
@@ -89,9 +88,8 @@ describe("CLASSE CONTA", () => {
     
     emissor.criarConta('0001', '12345', 300)
     receptor.criarConta('0002', '67890', 1000)
-    test("deveria realizar uma transferência com sucesso quando todos os dados estão corretos", () => {
-      
-      const transferencia = receptor.transferir(200, '0001', '67890')
+    test("deveria realizar uma transferência com sucesso quando todos os dados estão corretos", () => {      
+      const transferencia = emissor.transferir(200, '0002', '67890')
 
       expect(transferencia).toBe('Transferência realizada com sucesso!')
       expect(emissor.getSaldo).toBe(100)
@@ -108,36 +106,9 @@ describe("CLASSE CONTA", () => {
       })
 
     });
-
-    test("deveria fazer uma transferência por PIX com sucesso", () => {
-      receptor.criarChavePix('geice@email.com', 'email');
-
-      const fazerPix = emissor.pix(50, 'geice@email.com', 'email')
-
-      expect(fazerPix).toBe('Pix realizado com sucesso!')
-      expect(emissor.getSaldo).toBe(150)
-      expect(receptor.getSaldo).toBe(1050) //os valores não estão atualizando
-    });
-
-    test("deveria retornar um ERRO ao tentar fazer um PIX com valor -50", () => {
-      receptor.criarChavePix('geice@email.com', 'email');
-      
-      const fazerPix = emissor.pix(-50, 'geice@email.com', 'email')
-
-      expect(fazerPix).toBe('Valor inválido para realizar o pix.')
-    });
-
-    test("deveria retornar um ERRO passar a chavePix errada", () => {
-      receptor.criarChavePix('geice@email.com', 'email');
-      
-      const fazerPix = receptor.pix(50, 'g@email.com', 'email')
-
-      expect(fazerPix).toBe('Pix não encontrado.')
-
-    });
   });
 
-  describe("MÉTODO PIX", () => {
+  describe("MÉTODO CRIAR PIX", () => {
     test("testa a criação de uma chave-pix através do CPF com sucesso", () => {
       const criaPix = conta.criarChavePix('123456789101', 'CPF');
 
@@ -146,10 +117,11 @@ describe("CLASSE CONTA", () => {
     });
 
     test("testa o ERRO na criação de uma chave-pix através do CPF inválido", () => {
+      const conta = new Conta()
       const criaPix = conta.criarChavePix('12345', 'CPF');
 
       expect(criaPix).toBe('Erro: CPF inválido!')
-      // expect(()=>{ conta.criarChavePix('12345', 'CPF').toThrow('Erro: CPF inválido!') })
+      expect(()=>{ conta.criarChavePix('12345', 'CPF').toThrow('Erro: CPF inválido!') })
     });
 
     test("testa a criação de uma chave-pix através do e-mail com sucesso", () => {
@@ -181,4 +153,42 @@ describe("CLASSE CONTA", () => {
       
     });
   });
+  
+  describe('MÉTODO TRANSFERÊNCIA VIA PIX', ()=>{
+    const emissor = new Conta()
+    const receptor = new Conta()
+    
+    emissor.criarConta('0001', '12345', 300)
+    receptor.criarConta('0002', '67890', 1000)
+
+    test("deveria fazer uma transferência por PIX com sucesso", () => {
+      // sozinho ele passa, quando roda todos dá erro
+      receptor.criarChavePix('geice@email.com', 'email');
+
+      const fazerPix = emissor.pix(50, 'geice@email.com', 'email')
+
+      expect(fazerPix).toBe('Pix realizado com sucesso!')
+      expect(emissor.getSaldo).toBe(250)
+      expect(receptor.getSaldo).toBe(1050) 
+    });
+
+    test("deveria retornar um ERRO ao tentar fazer um PIX com valor -50", () => {
+      receptor.criarChavePix('geice@email.com', 'email');
+      
+      const fazerPix = emissor.pix(-50, 'geice@email.com', 'email')
+
+      expect(fazerPix).toBe('Valor inválido para realizar o pix.')
+    });
+
+    test("deveria retornar um ERRO passar a chavePix errada", () => {
+      receptor.criarChavePix('geice@email.com', 'email');
+      
+      const fazerPix = receptor.pix(50, 'g@email.com', 'email')
+
+      expect(fazerPix).toBe('Pix não encontrado.')
+
+    });
+
+  });
+
 });

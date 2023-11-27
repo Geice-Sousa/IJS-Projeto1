@@ -2,7 +2,6 @@ class Conta {
   #saldo;
   #agencia;
   #conta;
-  renda;
   chavesPix;
   static listaDeContas = []
 
@@ -80,16 +79,21 @@ class Conta {
     if(this.#saldo - valor > 0){ // a regra de négocio não permite a conta ficar negativada, então o saldo tem que ser sempre >0
      
       this.#saldo -= valor 
-      // const saldoAtualizado = this.#saldo - valor  this.setSaldo(saldoAtualizado)
+    
       contaValida.setSaldo = contaValida.getSaldo + valor
-      // const saldoContaReceptora = contaValida.getSaldo + valor  contaValida.setSaldo(saldoContaReceptora)
+  
+      // OU    
+      // const saldoAtualizado = this.#saldo - valor  
+      // this.setSaldo = saldoAtualizado
+      // const saldoContaReceptora = contaValida.getSaldo + valor 
+      // contaValida.setSaldo = saldoContaReceptora
       
       return 'Transferência realizada com sucesso!'
     }
   }
 
   pix(valor, chavePix, tipoChave){
-    let pixValido = Conta.listaDeContas.find( conta => conta.chavesPix[tipoChave] === chavePix);
+    let pixValido = Conta.listaDeContas.find(conta => conta.chavesPix[tipoChave] === chavePix);
 
     if(!pixValido){ return 'Pix não encontrado.'}
 
@@ -105,8 +109,8 @@ class Conta {
     }
   }
 
-  criarChavePix(chave, nomeChave) {
-    switch (nomeChave) {
+  criarChavePix(chave, tipoChave) {
+    switch (tipoChave) {
       case "CPF":
         let regexCPF = /([0-9]{2}[\.]?[0-9]{3}[\.]?[0-9]{3}[\/]?[0-9]{4}[-]?[0-9]{2})|([0-9]{3}[\.]?[0-9]{3}[\.]?[0-9]{3}[-]?[0-9]{2})/;
 
